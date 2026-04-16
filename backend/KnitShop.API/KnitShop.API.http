@@ -1,0 +1,6 @@
+@KnitShop.API_HostAddress = http://localhost:5152
+
+GET {{KnitShop.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
