@@ -1,3 +1,5 @@
+namespace KnitShop.API.Models;
+
 public class DeliveryAddress                
   {                                                            
       public int Id { get; set; }
