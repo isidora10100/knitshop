@@ -1,6 +1,7 @@
  using KnitShop.API.Data;                                     
  using Microsoft.EntityFrameworkCore;
- using Serilog;                                               
+ using Serilog;   
+ using KnitShop.API.Repositories;                                            
    
   var builder = WebApplication.CreateBuilder(args);            
                                           
@@ -15,7 +16,9 @@
   builder.Services.AddSwaggerGen();
                                                                
   builder.Services.AddDbContext<AppDbContext>(options =>
-      options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));                  
+      options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+  builder.Services.AddScoped<IProductRepository, ProductRepository>();
+  builder.Services.AddAutoMapper(typeof(Program));               
                                           
   var app = builder.Build();
                                                                
