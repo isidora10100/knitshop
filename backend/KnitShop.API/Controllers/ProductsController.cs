@@ -1,13 +1,15 @@
 using AutoMapper;
-  using Microsoft.AspNetCore.Mvc;                                                                                                     
+  using Microsoft.AspNetCore.Authorization;
+  using Microsoft.AspNetCore.Mvc;
   using KnitShop.API.DTOs;
   using KnitShop.API.Models;
-  using KnitShop.API.Repositories;                                                                                                    
-   
-  namespace KnitShop.API.Controllers;                                                                                                 
-                  
+  using KnitShop.API.Repositories;
+
+  namespace KnitShop.API.Controllers;
+
   [ApiController]
   [Route("api/[controller]")]
+  [Authorize]
   public class ProductsController : ControllerBase
   {
       private readonly IProductRepository _repository;
@@ -21,14 +23,16 @@ using AutoMapper;
 
                                                                                                                  
       [HttpGet]
-      public async Task<ActionResult<IEnumerable<ProductSummaryDto>>> GetAll()                                                        
-      {           
+      [AllowAnonymous]
+      public async Task<ActionResult<IEnumerable<ProductSummaryDto>>> GetAll()
+      {
           var products = await _repository.GetAllAsync();
           return Ok(_mapper.Map<IEnumerable<ProductSummaryDto>>(products));
       }                                                                                                                               
    
                                                                                                               
       [HttpGet("{id}")]
+      [AllowAnonymous]
       public async Task<ActionResult<ProductDetailDto>> GetById(int id)
       {                                                                                                                               
           var product = await _repository.GetByIdAsync(id);
@@ -40,8 +44,9 @@ using AutoMapper;
 
                                                                                                                   
       [HttpPost]
-      public async Task<ActionResult<ProductDetailDto>> Create(CreateProductDto dto)                                                  
-      {           
+      [Authorize(Roles = "Admin")]
+      public async Task<ActionResult<ProductDetailDto>> Create(CreateProductDto dto)
+      {
           var product = _mapper.Map<Product>(dto);
           var created = await _repository.CreateAsync(product);                                                                       
           return CreatedAtAction(nameof(GetById), new { id = created.Id }, _mapper.Map<ProductDetailDto>(created));
@@ -49,8 +54,9 @@ using AutoMapper;
                   
                                                                                                                 
       [HttpPut("{id}")]
-      public async Task<ActionResult<ProductDetailDto>> Update(int id, UpdateProductDto dto)                                          
-      {           
+      [Authorize(Roles = "Admin")]
+      public async Task<ActionResult<ProductDetailDto>> Update(int id, UpdateProductDto dto)
+      {
           if (!await _repository.ExistsAsync(id))
               return NotFound();
                                                                                                                                       
@@ -62,8 +68,9 @@ using AutoMapper;
 
                                                                                                              
       [HttpDelete("{id}")]
-      public async Task<IActionResult> Delete(int id)                                                                                 
-      {           
+      [Authorize(Roles = "Admin")]
+      public async Task<IActionResult> Delete(int id)
+      {
           if (!await _repository.ExistsAsync(id))
               return NotFound();
 
